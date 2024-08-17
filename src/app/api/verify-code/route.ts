@@ -13,7 +13,7 @@ export async function POST(req: Request) {
     }
     const decodedUsername = decodeURIComponent(username);
     const user = await UserModel.findOne({
-      decodedUsername,
+      username: decodedUsername,
     });
 
     if (!user) {

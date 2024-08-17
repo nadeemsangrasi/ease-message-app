@@ -34,7 +34,7 @@ export async function GET(req: Request) {
     const { username } = quryParam;
     const existingVarifiedUser = await UserModel.findOne({
       username,
-      isVarified: true,
+      isVerified: true,
     });
     if (existingVarifiedUser) {
       return Response.json(
