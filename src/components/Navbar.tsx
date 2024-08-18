@@ -28,14 +28,24 @@ function Navbar() {
             </Button>
           </>
         ) : (
-          <Link href="/sign-in">
-            <Button
-              className="w-full md:w-auto bg-slate-100 text-black"
-              variant={"outline"}
-            >
-              Login
-            </Button>
-          </Link>
+          <div className="space-x-2">
+            <Link href="/sign-in">
+              <Button
+                className="w-full md:w-auto bg-slate-100 text-black"
+                variant={"outline"}
+              >
+                Login
+              </Button>
+            </Link>
+            <Link href="/sign-up">
+              <Button
+                className="w-full md:w-auto bg-slate-100 text-black"
+                variant={"outline"}
+              >
+                Sign up
+              </Button>
+            </Link>
+          </div>
         )}
       </div>
     </nav>

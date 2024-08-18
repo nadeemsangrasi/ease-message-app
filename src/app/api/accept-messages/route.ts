@@ -10,9 +10,9 @@ export async function POST(req: Request) {
     const session = await getServerSession(authOptions);
     const user: User = session?.user as User;
     if (!session || !session.user) {
-      return Response.json(
-        { success: false, message: "user not authenticated" },
-        { status: 404 }
+      return new Response(
+        JSON.stringify({ success: false, message: "User not authenticated" }),
+        { status: 401, headers: { "Content-Type": "application/json" } }
       );
     }
 
@@ -21,32 +21,34 @@ export async function POST(req: Request) {
 
     const updatedUser = await UserModel.findByIdAndUpdate(
       userId,
-      { isAcceptingMessage: acceptMessages },
+      { isAcceptingMessages: acceptMessages },
       { new: true }
     );
     if (!updatedUser) {
-      return Response.json(
-        {
+      return new Response(
+        JSON.stringify({
           success: false,
-          message: "failed to update user status to accept messages ",
-        },
-        { status: 400 }
+          message: "Failed to update user status to accept messages",
+        }),
+        { status: 400, headers: { "Content-Type": "application/json" } }
       );
     }
-
-    return Response.json(
-      {
+    return new Response(
+      JSON.stringify({
         success: true,
         message: "Message acceptance status updated successfully",
         updatedUser,
-      },
-      { status: 200 }
+      }),
+      { status: 200, headers: { "Content-Type": "application/json" } }
     );
   } catch (error) {
     console.log("Error updating accepting messages", error);
-    return Response.json(
-      { success: false, message: "Error updating accepting messages" },
-      { status: 500 }
+    return new Response(
+      JSON.stringify({
+        success: false,
+        message: "Error updating accepting messages",
+      }),
+      { status: 500, headers: { "Content-Type": "application/json" } }
     );
   }
 }
@@ -57,9 +59,9 @@ export async function GET(req: Request) {
     const session = await getServerSession(authOptions);
     const user: User = session?.user as User;
     if (!session || !session.user) {
-      return Response.json(
-        { success: false, message: "user not authenticated" },
-        { status: 404 }
+      return new Response(
+        JSON.stringify({ success: false, message: "User not authenticated" }),
+        { status: 401, headers: { "Content-Type": "application/json" } }
       );
     }
 
@@ -67,27 +69,27 @@ export async function GET(req: Request) {
 
     const foundUser = await UserModel.findById(userId);
     if (!foundUser) {
-      return Response.json(
-        {
-          success: false,
-          message: "user not found",
-        },
-        { status: 404 }
+      return new Response(
+        JSON.stringify({ success: false, message: "User not found" }),
+        { status: 404, headers: { "Content-Type": "application/json" } }
       );
     }
 
-    return Response.json(
-      {
+    return new Response(
+      JSON.stringify({
         success: true,
         isAcceptingMessages: foundUser.isAcceptingMessages,
-      },
-      { status: 200 }
+      }),
+      { status: 200, headers: { "Content-Type": "application/json" } }
     );
   } catch (error) {
-    console.log("Error geting accepting messages", error);
-    return Response.json(
-      { success: false, message: "Error geting accepting messages" },
-      { status: 500 }
+    console.log("Error getting accepting messages", error);
+    return new Response(
+      JSON.stringify({
+        success: false,
+        message: "Error getting accepting messages",
+      }),
+      { status: 500, headers: { "Content-Type": "application/json" } }
     );
   }
 }

@@ -1,22 +1,45 @@
-import { resend } from "@/lib/resend";
-import VerificationEmail from "../../emails/VerificationEmail";
-import { IApiResponse } from "@/types/ApiResponse";
+import nodemailer from "nodemailer";
 
-export async function sendVerificationEmail(
-  email: string,
-  username: string,
-  verifyCode: string
-): Promise<IApiResponse> {
+export const sendVerificationEmail = async ({
+  email,
+  username,
+  verifyCode,
+}: any) => {
   try {
-    await resend.emails.send({
-      from: "Acme <onboarding@resend.dev>",
-      to: email,
-      subject: "Ease message verification email",
-      react: VerificationEmail({ username, otp: verifyCode }),
+    const transport = nodemailer.createTransport({
+      service: "gmail",
+      secure: true,
+      port: 465,
+      auth: {
+        user: process.env.USER,
+        pass: process.env.PASSWORD,
+      },
     });
-    return { success: true, message: "Verification email sent successfully" };
-  } catch (emailError) {
-    console.error("Error sending verification email", emailError);
-    return { success: false, message: "Failed to send verification email" };
+
+    const subject = "Verify Your Email Address";
+
+    const htmlContent = `
+      <p>Hello,${username}</p>
+      <p>Thank you for registering with us. Please verify the code given below</p>
+      <br>
+      <p>${verifyCode}</p>
+      <br>
+      <p>Best regards,<br>Ease Feedback</p>
+    `;
+
+    const mailOptions = await transport.sendMail({
+      from: {
+        name: "Ease Feedback",
+        address: process.env.USER!,
+      },
+      to: email,
+      subject,
+      html: htmlContent,
+    });
+
+    console.log("Message sent: %s", mailOptions.messageId);
+  } catch (error: any) {
+    console.log(error.message);
+    return { error: error.message, status: 500 };
   }
-}
+};

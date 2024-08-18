@@ -8,9 +8,6 @@ export async function middleware(request: NextRequest) {
   const token = await getToken({ req: request });
   const url = request.nextUrl;
 
-  // Log token for debugging
-  console.log("Token:", token);
-
   // Redirect authenticated users from public routes to the dashboard
   if (
     token &&
