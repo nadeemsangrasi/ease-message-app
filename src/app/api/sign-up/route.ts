@@ -68,11 +68,11 @@ export async function POST(request: Request) {
       username,
       verifyCode
     );
-    if (!emailResponse.success) {
+    if (emailResponse?.status !== 200) {
       return Response.json(
         {
           success: false,
-          message: emailResponse.message,
+          message: "Error sanding verification email",
         },
         { status: 500 }
       );

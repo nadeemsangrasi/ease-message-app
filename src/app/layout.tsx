@@ -21,9 +21,11 @@ export default function RootLayout({
     <html lang="en">
       <AuthProvider>
         <body className={inter.className}>
-          <Navbar />
-          {children}
-          <Toaster />
+          <div className="overflow-hidden">
+            <Navbar />
+            {children}
+            <Toaster />
+          </div>
         </body>
       </AuthProvider>
     </html>

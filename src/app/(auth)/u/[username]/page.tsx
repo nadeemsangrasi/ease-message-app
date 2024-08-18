@@ -62,13 +62,15 @@ const SandMessage = () => {
     }
   };
   return (
-    <div className="my-8 py-8">
-      <div className="container mx-auto w-[60%]">
+    <div className="my-16 py-16">
+      <div className="container mx-auto  sm:w-[60%]">
         <div className="mx-auto text-center my-4">
-          <h2 className="text-4xl font-semibold pb-2">
+          <h2 className="text-3xl sm:text-4xl font-semibold pb-2">
             Start writting your feedback{" "}
           </h2>
-          <h1 className="text-3xl font-semibold">for {username}</h1>
+          <h1 className=" text-2xl sm:text-3xl font-semibold">
+            for {username}
+          </h1>
         </div>
         <div>
           <Form {...form}>
@@ -92,35 +94,24 @@ const SandMessage = () => {
                 )}
               />
               <div className="text-center my-4">
-                <Button variant={"default"} className="w-1/2  " type="submit">
-                  {isSubmitingMessage ? "sanding..." : "Sand"}
+                <Button
+                  variant={"default"}
+                  className="w-1/2  "
+                  type="submit"
+                  disabled={isSubmitingMessage}
+                >
+                  {isSubmitingMessage ? (
+                    <>
+                      <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                      Please wait
+                    </>
+                  ) : (
+                    "Send"
+                  )}
                 </Button>
               </div>
             </form>
           </Form>
-        </div>
-        <div>
-          <div className="my-4 mx-4 md:mx-8 lg:mx-auto p-6 bg-white rounded w-full max-w-6xl">
-            <Button
-              className="mt-4"
-              variant="outline"
-              onClick={(e) => {
-                e.preventDefault();
-                // fetch(true);
-              }}
-            >
-              {isFetchingSuggestedMessage ? (
-                <Loader2 className="h-4 w-4 animate-spin" />
-              ) : (
-                <RefreshCcw className="h-4 w-4" />
-              )}
-            </Button>
-            <div className="mt-4 grid grid-cols-1 md:grid-cols-2 gap-6">
-              <div className="py-3 px-5 border w-fit rounded-lg ">
-                <h1>heloo how can i assist your today brother</h1>
-              </div>
-            </div>
-          </div>
         </div>
       </div>
     </div>
