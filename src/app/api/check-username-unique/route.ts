@@ -15,10 +15,10 @@ export async function GET(req: Request) {
       username: searchParams.get("username"),
     };
 
-    // validate username with zod
+    // Validate username with zod
     const result = usernameQuerySchema.safeParse(quryParam);
-    console.log(result);
-    if (!result) {
+
+    if (!result.success) {
       const usernameError = result.error.format().username?._errors || [];
       return Response.json(
         {
@@ -28,17 +28,19 @@ export async function GET(req: Request) {
               ? usernameError.join(", ")
               : "Invalid query username",
         },
-        { status: 500 }
+        { status: 400 }
       );
     }
+
     const { username } = quryParam;
     const existingVarifiedUser = await UserModel.findOne({
       username,
       isVerified: true,
     });
+
     if (existingVarifiedUser) {
       return Response.json(
-        { success: false, message: "username is already taken" },
+        { success: false, message: "Username is already taken" },
         { status: 400 }
       );
     }

@@ -3,6 +3,27 @@ import CredentialsProvider from "next-auth/providers/credentials";
 import bcrypt from "bcryptjs";
 import dbConnect from "@/lib/dbConnect";
 import UserModel from "@/models/User";
+import { JWT } from "next-auth/jwt"; // Import JWT type
+import { Session } from "next-auth"; // Import Session type
+
+interface CustomSession extends Session {
+  user: {
+    _id?: string;
+    isVerified?: boolean;
+    isAcceptingMessages?: boolean;
+    username?: string;
+    name?: string | null;
+    email?: string | null;
+    image?: string | null;
+  };
+}
+
+interface CustomToken extends JWT {
+  _id?: string;
+  isVerified?: boolean;
+  isAcceptingMessages?: boolean;
+  username?: string;
+}
 
 export const authOptions: NextAuthOptions = {
   providers: [
@@ -10,7 +31,7 @@ export const authOptions: NextAuthOptions = {
       id: "credentials",
       name: "Credentials",
       credentials: {
-        email: { label: "Email or Username", type: "text" }, // Updated
+        email: { label: "Email or Username", type: "text" },
         password: { label: "Password", type: "password" },
       },
       async authorize(credentials: any): Promise<any> {
@@ -40,7 +61,7 @@ export const authOptions: NextAuthOptions = {
             throw new Error("Username or password is incorrect");
           }
 
-          return user; // Ensure user object is returned
+          return user;
         } catch (err: any) {
           throw new Error(err.message);
         }
@@ -48,7 +69,7 @@ export const authOptions: NextAuthOptions = {
     }),
   ],
   callbacks: {
-    async jwt({ token, user }) {
+    async jwt({ token, user }): Promise<CustomToken> {
       if (user) {
         token._id = user._id?.toString();
         token.isVerified = user.isVerified;
@@ -57,12 +78,17 @@ export const authOptions: NextAuthOptions = {
       }
       return token;
     },
-    async session({ session, token }) {
+    async session({ session, token }): Promise<CustomSession> {
       if (token) {
-        session.user._id = token._id;
-        session.user.isVerified = token.isVerified;
-        session.user.isAcceptingMessages = token.isAcceptingMessages;
-        session.user.username = token.username;
+        session.user = {
+          _id: token._id,
+          isVerified: token.isVerified,
+          isAcceptingMessages: token.isAcceptingMessages,
+          username: token.username,
+          name: session.user.name || null,
+          email: session.user.email || null,
+          image: session.user.image || null,
+        } as CustomSession["user"];
       }
       return session;
     },

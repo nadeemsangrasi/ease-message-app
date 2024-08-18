@@ -52,11 +52,15 @@ const SandMessage = () => {
       }
     } catch (error) {
       const axiosError = error as AxiosError<IApiResponse>;
-      console.log("Error sanding message", axiosError.response.data.message);
+      let errorMessage = axiosError.response?.data.message;
+      console.log("Error sanding message", errorMessage);
       toast({
-        title: "failed to sand message",
-        description: axiosError.response.data.message,
+        title: "Error sanding message",
+        description: errorMessage,
+        variant: "destructive",
       });
+
+      // Default error message
     } finally {
       setIsSubmitingMessage(false);
     }
