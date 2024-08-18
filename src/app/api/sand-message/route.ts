@@ -23,7 +23,7 @@ export async function POST(req: Request) {
     }
 
     //is user accepting the messages
-    if (!user.isAcceptingMessage) {
+    if (!user.isAcceptingMessages) {
       return Response.json(
         { success: false, message: "user is not accepting messages" },
         { status: 500 }

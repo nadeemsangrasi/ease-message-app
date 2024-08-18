@@ -19,18 +19,17 @@ export async function GET(req: Request) {
 
     const userId = new mongoose.Types.ObjectId(user._id);
     const userWithMessages = await UserModel.aggregate([
-      { $match: { id: userId } },
-      { $unwind: "messages" },
+      { $match: { _id: userId } },
+      { $unwind: "$messages" }, // Prefix 'messages' with '$'
       { $sort: { "messages.createdAt": -1 } },
       { $group: { _id: "$_id", messages: { $push: "$messages" } } },
     ]);
 
-   
     if (!userWithMessages || userWithMessages.length === 0) {
       return Response.json(
         {
           success: false,
-          message: "user not found",
+          message: "user dont have messages yet",
         },
         { status: 404 }
       );
@@ -39,14 +38,14 @@ export async function GET(req: Request) {
     return Response.json(
       {
         success: true,
-        messages:userWithMessages[0].messages,
+        messages: userWithMessages[0].messages,
       },
       { status: 200 }
     );
   } catch (error) {
-    console.log("Error geting  messages", error);
+    console.log("Error getting messages", error);
     return Response.json(
-      { success: false, message: "Error geting messages" },
+      { success: false, message: "Error getting messages" },
       { status: 500 }
     );
   }
